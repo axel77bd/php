@@ -35,6 +35,23 @@
         <li class="nav-item">
           <a class="nav-link" href="index.php?page=listearticle">ListeArticles</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=listecontact">ListeContat</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=listeutilisateurs">Liste Utlisateurs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=commentaire">commentaire</a>
+        </li>
+        <?php
+        if(isset($_SESSION['login'])){
+          $email=$_SESSION['login'];
+        
+        echo '<li class="nav-item">
+          <a class="nav-link" href="">'.$email.'</a>
+        </li>';}
+        ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
           <div class="dropdown-menu">

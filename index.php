@@ -1,4 +1,5 @@
 <?php 
+session_start();
     // une fonction qui permet d'afficher le contenu d'une variable y compris les tableaux 
     //var_dump($_GET);
     require_once 'header.php';
