@@ -29,6 +29,12 @@
         <li class="nav-item">
           <a class="nav-link" href="index.php?page=contact">Contact</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=article">Article</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php?page=listearticle">ListeArticles</a>
+        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
           <div class="dropdown-menu">
