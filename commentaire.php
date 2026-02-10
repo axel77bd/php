@@ -37,6 +37,7 @@ if (isset($_POST['valider'])) {
         // si $r=vrai alors l'inscription est réussie 
         if($r){
           echo "ajout réussie ";
+          
         }
         else{
           echo "echec de l'ajout ";

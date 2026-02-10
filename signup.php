@@ -9,8 +9,22 @@ if (isset($_POST['valider'])) {
     if (empty($email)) {
         echo "veuillez saisir un email ";
     } else {
-        echo "$email";
+        
+        $sql = "select email from user where email=:email";
+                $sql = $dbh->prepare($sql);
+                $sql->bindParam(':email', $email, PDO::PARAM_STR);
+                $sql->execute();
+                $row2 = $sql->fetch();
+                if ($row2 == null) {
+                  echo "$email";
+                } else {
+                    echo 'email déjà utilisé ';
+                }
+
+            }
+          
     }
+  
     if (empty($password)) {
         echo "veuillez saisir un mot de passe ";
     } else {
@@ -33,13 +47,13 @@ if (isset($_POST['valider'])) {
         echo "$radio";
     }
     // on protege l'inscription en vérifiant que les données ne sont pas vides 
-    if ((!empty($email)) && (!empty($password)) && (!empty($name)) && (!empty($prenom))) {
+    if ((!empty($email)) && (!empty($password)) && (!empty($name)) && (!empty($prenom))&&(($row2==null))) {
       $datedepublication=date("Y-m-d H:i:s");
       // nous hashons le mot de passe avec l'algo choisi par php. nous avons une longue chaine de caractère à la place du mp
        $password =password_hash($password, PASSWORD_DEFAULT);
 
       // on prépare  une requête  d'insertion qui associe une colonne de la table avec une donnée 
-        $sql = $dbh->prepare("INSERT INTO user(`nom`, `prenom`, `email`, `password`,`datedepublication`) VALUES (:nom, :prenom, :email,:password , :datedepublication)");
+        $sql = $dbh->prepare("INSERT INTO user(`nom`, `prenom`, `email`, `password`,`datedepublication`,`role`) VALUES (:nom, :prenom, :email,:password , :datedepublication,'user')");
         //j'associe une variable de la requete avec une variable php en precisant sont type 
         $sql->bindParam(':nom', $name, PDO::PARAM_STR);
         $sql->bindParam(':prenom', $prenom, PDO::PARAM_STR);
@@ -55,8 +69,10 @@ if (isset($_POST['valider'])) {
         else{
           echo "echec de l'inscription";
         }
+      
     }
-}
+  
+
 ?>
  <h1 class="text-dark text-center">Inscription </h1>
 <form action="index.php?page=signup" method="post">
