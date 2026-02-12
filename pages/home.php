@@ -4,8 +4,9 @@
 <h1>BIENVENUE SUR MON SITE </h1>
 <div class="row row-cols-1 row-cols-md-4 g-4">
 <?php
-$sql = 'SELECT id,sujet,image, contenu, datedepublication FROM Article ORDER BY datedepublication desc';
-foreach ($dbh->query($sql) as $row) {
+$article = new Article($dbh);
+$articles = $article->select();
+foreach ($articles as $row) {
    echo' <div class="col">';
     echo '<div class="card " style=" ">
   <img src="images/' . $row['image'] . '" class="card-img-top" alt="...">

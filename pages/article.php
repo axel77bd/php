@@ -3,7 +3,7 @@ if (isset($_POST['valider'])) {
     //var_dump($_FILES);
     $sujet = htmlentities($_POST['sujet']);
     $contenu = nl2br($_POST['contenu']);
-    $categories= $_POST['categories'];
+   // $categories= $_POST['categories'];
     if (empty($sujet)) {
         echo "veuillez saisir un sujet ";
         $valideSujet = false;
@@ -48,7 +48,7 @@ if (isset($_POST['valider'])) {
                 } 
                   
                
-                if($_FILES['image']['size']>1000){
+                if($_FILES['image']['size']>500000){
                   
                   echo'fichier volumineux ';
                   $annuler=true;
@@ -69,24 +69,8 @@ if (isset($_POST['valider'])) {
 
         
         if (!$annuler) {
-
-            $datedepublication = date("Y-m-d H:i:s");
-            // on prépare  une requête  d'insertion qui associe une colonne de la table avec une donnée
-            $sql = $dbh->prepare("INSERT INTO Article(`sujet`, `contenu`, `datedepublication`,`image`,`anciennom`) VALUES (:sujet, :contenu, :datedepublication,:image,:anciennom)");
-            //j'associe une variable de la requete avec une variable php en precisant sont type
-            $sql->bindParam(':sujet', $sujet, PDO::PARAM_STR);
-            $sql->bindParam(':contenu', $contenu, PDO::PARAM_STR);
-            $sql->bindParam(':datedepublication', $datedepublication, PDO::PARAM_STR);
-            $sql->bindParam(':image', $image, PDO::PARAM_STR);
-            $sql->bindParam(':anciennom', $anciennom, PDO::PARAM_STR);
-            // j'execute la requête prépare et je met le resultat dans $r
-            $r = $sql->execute();
-            // si $r=vrai alors l'inscription est réussie
-            if ($r) {
-                echo "ajout réussie ";
-            } else {
-                echo "echec de l'ajout ";
-            }
+            $article = new Article($dbh);
+           $article->insert($sujet,$contenu,$image,$anciennom);
         }
     }
 

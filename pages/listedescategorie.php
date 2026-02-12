@@ -11,7 +11,7 @@ if (isset($_SESSION['login'])) {
             }
         }
         if (isset($_POST['valider'])) {
-            $categories= $_POST['categories'];
+            $categories = $_POST['categories'];
             //var_dump($users);
             foreach ($categories as $categorie) {
                 //echo $user . ' ';
@@ -29,10 +29,10 @@ if (isset($_SESSION['login'])) {
         foreach ($dbh->query($sql) as $row) {
             echo "<tr> <td>";
             echo $row['nom'] . "\t";
-            
-            echo'</td><td><a class="btn btn-primary" href="index.php?page=modifiercategorie&categorie='.$row['id'].'">modifier</a>';
-            echo '</td><td> <a class="btn btn-danger "href="index.php?page=listedescategorie&categorie='.$row['id'].'&action=supprimer">supprimer</a></td>
-           <td><input value=" '.$row['id'].' " class= "form-check-input" name="categories[]" type="checkbox" id="flexCheckDefault">
+
+            echo '</td><td><a class="btn btn-primary" href="index.php?page=modifiercategorie&categorie=' . $row['id'] . '">modifier</a>';
+            echo '</td><td> <a class="btn btn-danger "href="index.php?page=listedescategorie&categorie=' . $row['id'] . '&action=supprimer">supprimer</a></td>
+           <td><input value=" ' . $row['id'] . ' " class= "form-check-input" name="categories[]" type="checkbox" id="flexCheckDefault">
             <label class="form-check-label" for="flexCheckDefault"> </label></td>';
             echo "</td></tr>";
         }
@@ -46,4 +46,3 @@ if (isset($_SESSION['login'])) {
 } else {
     echo 'connectez vous';
 }
-?>

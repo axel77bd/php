@@ -2,8 +2,9 @@
 session_start();
     // une fonction qui permet d'afficher le contenu d'une variable y compris les tableaux 
     //var_dump($_GET);
-    require_once 'header.php';
-    require_once 'db/mariadb.php';
+    require_once '../pages/header.php';
+    require_once '../db/mariadb.php';
+    require_once '../classes/class_article.php';
 ?>
 <?php
 // Si la connexion à la base de données fonctionne alors
@@ -20,21 +21,21 @@ if($dbh!=null){
         $page='home';
     }
     //  si le fichier php de la page existe 
-    if(file_exists($page.'.php')){
+    if(file_exists('../pages/'.$page.'.php')){
         // on l'appelle 
-        require_once $page.'.php';
+        require_once '../pages/'.$page.'.php';
     }
     else{
         // sinon appelle la page 'error404.php'
-        require_once 'error404.php';
+        require_once '../pages/error404.php';
     }
 }else{
     // Si la base de données n’est pas connectée alors
-    require_once 'maintenance.php';
+    require_once '../pages/maintenance.php';
 } 
      
 ?>
 
 <?php   
-    require_once 'footer.php';
+    require_once '../pages/footer.php';
 ?>

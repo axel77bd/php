@@ -1,7 +1,6 @@
 <?php
 if (isset($_SESSION['login'])) {
     if ($_SESSION['role'] == 'admin' || $_SESSION['id']) {
-        echo '<h1>modifier article </h1>';
         $article = null;
 //verifie si il est existe dans le tableau $_GET(url) la categorie
         if (isset($_GET['Article'])) {
@@ -11,17 +10,9 @@ if (isset($_SESSION['login'])) {
 
 //si $categorie n'est pas null
         if ($article) {
-            // nous ecrivons la requête permettant d'identifier une catégorie
-            $sql = " SELECT id,sujet,image, contenu, datedepublication FROM Article where id=:id";
-            //on prepare la requête en protégeant les  paramètres et en verifiant les types
-            $sql = $dbh->prepare($sql);
-            // on a associe la variable php avec la variable sql
-            $sql->bindParam(':id', $article, PDO::PARAM_INT);
-            // on execute la requête
-            $sql->execute();
-            //on récupère la ligne correspondant a la reponse de la requête ou la valeur null
-            $row = $sql->fetch();
-            // si la ligne est null c'est que la categorie n'existe pas
+            $cato = new Article($dbh);
+            $row = $cato->selectArticle($article);
+
             if (isset($_POST['modifier'])) {
                 $sujet = $_POST['sujet'];
                 $contenu = $_POST['contenu'];
@@ -58,15 +49,8 @@ if (isset($_SESSION['login'])) {
                             }
 
                             move_uploaded_file($tmp, 'images/' . $image);
-                            $sql = "update Article set image=:image, sujet=:sujet,contenu=:contenu where id=:id";
-                            $sql = $dbh->prepare($sql);
-                            $sql->bindParam(':image', $image, PDO::PARAM_STR);
-                            $sql->bindParam(':id', $article, PDO::PARAM_INT);
-                            $sql->bindParam(':sujet', $sujet, PDO::PARAM_STR);
-                            $sql->bindParam(':contenu', $contenu, PDO::PARAM_STR);
-                            $sql->execute();
-                            echo $image . ' ' . $article . ' ' . $sujet . ' ' . $contenu;
-                            echo 'reussi';
+                            $art = new Article($dbh);
+                            $art->update($image, $article, $sujet, $contenu);
 
                             header('Location:index.php?page=home');
                         }
@@ -74,12 +58,13 @@ if (isset($_SESSION['login'])) {
                     } else {
                         $image = null;
                         $anciennom = null;
-                    }}
+                    }
                 }
-                if (($row == null)) {
-                    echo "il y a un problèmme d'identifiant, la categorie n\'existe pas ";
-                } else {
-                    echo '<form action="index.php?page=modifierarticle&Article=' . $row['id'] . '" method="post" enctype="multipart/form-data">
+            }
+            if (($row == null)) {
+                echo "il y a un problèmme d'identifiant, l'article n\'existe pas ";
+            } else {
+                echo '<form action="index.php?page=modifierarticle&Article=' . $row['id'] . '" method="post" enctype="multipart/form-data">
   <div class="row">
     <div class="col-12 col-md-6">
     <div>
@@ -104,12 +89,11 @@ if (isset($_SESSION['login'])) {
     </form>
 
     ';
-                }   
-            } else {
-
-                echo 'l\'article n\'existe pas';
             }
+        } else {
 
+            echo 'l\'article n\'existe pas';
         }
-    }
 
+    }
+}

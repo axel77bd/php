@@ -10,17 +10,8 @@ if (isset($_GET['Article'])) {
 }
 
 if ($Article) {
-    // nous ecrivons la requête permettant d'identifier une catégorie
-    $sql = "select id,image,contenu,sujet,datedepublication from Article where id=:id";
-    //on prepare la requête en protégeant les  paramètres et en verifiant les types
-    $sql = $dbh->prepare($sql);
-    // on a associe la variable php avec la variable sq
-    $sql->bindParam(':id', $Article, PDO::PARAM_INT);
-    // on execute la requête
-    $sql->execute();
-    //on récupère la ligne correspondant a la reponse de la requête ou la valeur null
-    $row = $sql->fetch();
-    // si la ligne est null c'e
+    $cato = new Article($dbh);
+    $row = $cato->selectArticle($article);
     if (($row == null)) {
         echo "l'article  n\'existe pas ";
     } else {
