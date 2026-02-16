@@ -18,16 +18,8 @@ if (isset($_POST['valider'])) {
     }
     // si l'email et le mot passe sont saisis
     if (($valideemail) && (($validepassword))) {
-        // on ecrit la requête qui va retouner les information de l'utilisateur qui possède cet email
-        $sql = 'SELECT nom, prenom, password, email,id,role FROM user where email= :email ';
-        // on prépare la requête
-        $sql = $dbh->prepare($sql);
-        // on associe la variable $email à la variable :email (cela protege des codes malveillants)
-        $sql->bindParam(':email', $email, PDO::PARAM_STR);
-        // il execute la requete
-        $sql->execute();
-        //on récupère la ligne de résultat
-        $row = $sql->fetch();
+        $co= new User($dbh);
+        $row =$co->connexion($email) ;
         // si la ligne est null c'est que l'utlisateur n'existe pas
         if (($row == null)) {
             echo "il y a un problèmme d'identifiant";

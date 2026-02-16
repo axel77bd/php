@@ -12,16 +12,8 @@ if (isset($_SESSION['login'])) {
 
 //si $categorie n'est pas null
         if ($categorie) {
-            // nous ecrivons la requête permettant d'identifier une catégorie
-            $sql = "select id,nom from categorie where id=:id";
-            //on prepare la requête en protégeant les  paramètres et en verifiant les types
-            $sql = $dbh->prepare($sql);
-            // on a associe la variable php avec la variable sql
-            $sql->bindParam(':id', $categorie, PDO::PARAM_INT);
-            // on execute la requête
-            $sql->execute();
-            //on récupère la ligne correspondant a la reponse de la requête ou la valeur null
-            $row = $sql->fetch();
+          $cate= new Commentaire($dbh);
+          $row=$cate->selectCategorie( $categorie);
             // si la ligne est null c'est que la categorie n'existe pas
             if (($row == null)) {
                 echo "il y a un problèmme d'identifiant, la categorie n\'existe pas ";
@@ -45,11 +37,8 @@ if (isset($_SESSION['login'])) {
                 $id = $_POST['id'];
                 echo $id;
                 echo $categorie;
-                $sql = "update categorie set nom=:nom where id=:id";
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':id', $id, PDO::PARAM_INT);
-                $sql->bindParam(':nom', $categorie, PDO::PARAM_STR);
-                $sql->execute();
+               $modif= new Categorie($dbh);
+               $modif->update($id,$categorie);
                 header('Location:index.php?page=listedescategorie');
 
                 echo 'formulaire envoyé ';

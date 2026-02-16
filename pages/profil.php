@@ -1,14 +1,7 @@
 <?php
 if (isset($_SESSION['login'])) {
-    $sql = 'SELECT id,nom, prenom, password, email,role,image FROM user where email= :email ';
-    // on prépare la requête
-    $sql = $dbh->prepare($sql);
-    // on associe la variable $email à la variable :email (cela protege des codes malveillants)
-    $sql->bindParam(':email', $_SESSION['login'], PDO::PARAM_STR);
-    // il execute la requete
-    $sql->execute();
-    //on récupère la ligne de résultat
-    $row = $sql->fetch();
+    $co= new User($dbh);
+    $row =$co->connexion() ;
     if (($row == null)) {
         echo "il y a un problèmme d'identifiant";
     } else {
@@ -24,11 +17,9 @@ if (isset($_SESSION['login'])) {
                 $confirmation = $_POST['confirmation'];
                 if ($password == $confirmation) {
                     $password = password_hash($password, PASSWORD_DEFAULT);
-                    $sql = "update user set password=:password where email=:email";
-                    $sql = $dbh->prepare($sql);
-                    $sql->bindParam(':email', $_SESSION['login'], PDO::PARAM_STR);
-                    $sql->bindParam(':password', $password, PDO::PARAM_STR);
-                    $r = $sql->execute();
+                   $upPassw= new User($dbh);
+                    $r=$upPassw->upPass($password);
+
                     // si $r=vrai alors l'inscription est réussie
                     if ($r) {
                         echo "mot de passe modifie";
@@ -49,18 +40,13 @@ if (isset($_SESSION['login'])) {
             if (empty($email)) {
 
             } else {
-                $sql = "select email from user where email=:email";
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':email', $email, PDO::PARAM_STR);
-                $sql->execute();
-                $row2 = $sql->fetch();
+                $selectE= new User($dbh);
+                $row2=$selectE->selectEmail( $email);
                 if ($row2 == null) {
+                    $modifE= new User ($dbh);
+                    $r=$modifE->upEmail( $email,$row['id']);
 
-                    $sql = "update user set email=:email where id=:id";
-                    $sql = $dbh->prepare($sql);
-                    $sql->bindParam(':email', $email, PDO::PARAM_STR);
-                    $sql->bindParam(':id', $row['id'], PDO::PARAM_INT);
-                    $r = $sql->execute();
+                  
                     // si $r=vrai alors l'inscription est réussie
                     if ($r) {
                         echo "email modifie";
@@ -117,12 +103,10 @@ if (isset($_SESSION['login'])) {
                         unlink($anciennom);
                     
                         move_uploaded_file($tmp, 'images/' . $image);
-                        $sql="update user set image =:image where id=:id";
-                        $sql = $dbh->prepare($sql);
-                        $sql->bindParam(':image', $image, PDO::PARAM_STR);
-                        $sql->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
-                        $sql->execute();
-
+                        $modifI= new User ($dbh);
+                        $modifI->upImage($image);
+                        
+                        
                         header('Location:index.php?page=profil');
                     }
     

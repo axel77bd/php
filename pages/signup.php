@@ -10,11 +10,8 @@ if (isset($_POST['valider'])) {
         echo "veuillez saisir un email ";
     } else {
         
-        $sql = "select email from user where email=:email";
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':email', $email, PDO::PARAM_STR);
-                $sql->execute();
-                $row2 = $sql->fetch();
+      $selectE= new User($dbh);
+      $row2=$selectE->selectEmail( $email);
                 if ($row2 == null) {
                   echo "$email";
                 } else {
@@ -48,20 +45,8 @@ if (isset($_POST['valider'])) {
     }
     // on protege l'inscription en vérifiant que les données ne sont pas vides 
     if ((!empty($email)) && (!empty($password)) && (!empty($name)) && (!empty($prenom))&&(($row2==null))) {
-      $datedepublication=date("Y-m-d H:i:s");
-      // nous hashons le mot de passe avec l'algo choisi par php. nous avons une longue chaine de caractère à la place du mp
-       $password =password_hash($password, PASSWORD_DEFAULT);
-
-      // on prépare  une requête  d'insertion qui associe une colonne de la table avec une donnée 
-        $sql = $dbh->prepare("INSERT INTO user(`nom`, `prenom`, `email`, `password`,`datedepublication`,`role`) VALUES (:nom, :prenom, :email,:password , :datedepublication,'user')");
-        //j'associe une variable de la requete avec une variable php en precisant sont type 
-        $sql->bindParam(':nom', $name, PDO::PARAM_STR);
-        $sql->bindParam(':prenom', $prenom, PDO::PARAM_STR);
-        $sql->bindParam(':email', $email, PDO::PARAM_STR);
-        $sql->bindParam(':password', $password, PDO::PARAM_STR);
-        $sql->bindParam(':datedepublication', $datedepublication, PDO::PARAM_STR);
-      // j'execute la requête prépare et je met le resultat dans $r 
-        $r = $sql->execute();
+      $insertU= new User ($dbh);
+      $r=$insertU->insert( $name, $prenom, $email,$password);
         // si $r=vrai alors l'inscription est réussie 
         if($r){
           echo "inscription réussie ";

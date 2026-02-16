@@ -4,10 +4,8 @@ if (isset($_SESSION['login'])) {
         echo '<h1>Liste des catégories </h1>';
         if ((isset($_GET['categorie'])) && (isset($_GET['action']))) {
             if ($_GET['action'] == 'supprimer') {
-                $sql = 'delete from categorie where id=:id';
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':id', $_GET['categorie'], PDO::PARAM_INT);
-                $r = $sql->execute();
+               $ca= new Categorie($dbh);
+               $ca->delete($_GET['categorie']);
             }
         }
         if (isset($_POST['valider'])) {
@@ -15,18 +13,17 @@ if (isset($_SESSION['login'])) {
             //var_dump($users);
             foreach ($categories as $categorie) {
                 //echo $user . ' ';
-                $sql = 'delete from categorie where id=:id';
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':id', $categorie, PDO::PARAM_INT);
-                $sql->execute();
+                $ca= new Categorie($dbh);
+               $ca->delete($categorie);
 
             }
 
         }
-        $sql = 'SELECT nom ,id FROM categorie ORDER BY nom asc';
+        $cates= new Categorie($dbh);
+$ca=$cates->select();
         echo '<form action="index.php?page=listedescategorie" method="post">';
         echo "<table> <tr> <th>nom</th> <th>modifier</th><th>suppression</th> </tr>";
-        foreach ($dbh->query($sql) as $row) {
+        foreach ($ca as $row) {
             echo "<tr> <td>";
             echo $row['nom'] . "\t";
 

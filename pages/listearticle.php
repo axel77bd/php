@@ -1,6 +1,5 @@
 <h1>Liste des Articles</h1>
 <?php
-$sql = 'SELECT sujet, contenu, datedepublication,image,id FROM Article ORDER BY datedepublication desc';
 echo '<table> <tr> <th>Sujet</th> <th>datedepublication</th> <th>modifier</th></tr>';
 $article = new Article($dbh);
 $articles = $article->select();

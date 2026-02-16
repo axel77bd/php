@@ -5,6 +5,11 @@ session_start();
     require_once '../pages/header.php';
     require_once '../db/mariadb.php';
     require_once '../classes/class_article.php';
+    require_once '../classes/class_user.php';
+    require_once '../classes/class_categorie.php';
+    require_once '../classes/class_commentaire.php';
+    require_once '../classes/class_contact.php';
+    
 ?>
 <?php
 // Si la connexion à la base de données fonctionne alors

@@ -47,10 +47,10 @@ class Article
         $sql->execute();
     }
     
-    public function selectArticle($article){
+    public function selectArticle($Article){
         $sql = " SELECT id,sujet,image, contenu, datedepublication FROM Article where id=:id";
         $sql = $this->dbh->prepare($sql);
-        $sql->bindParam(':id', $article, PDO::PARAM_INT);
+        $sql->bindParam(':id', $Article, PDO::PARAM_INT);
         $sql->execute();
         return $sql->fetch();
 

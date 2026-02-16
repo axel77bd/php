@@ -76,7 +76,8 @@ if (isset($_POST['valider'])) {
 
 
 }
-$cate = 'SELECT nom ,id FROM categorie ORDER BY nom asc';
+$cates= new Categorie($dbh);
+$ca=$cates->select();
     
                 
                 
@@ -99,7 +100,7 @@ echo'<form action="index.php?page=article" method="post" enctype="multipart/form
     </div>
     
     <div>';
-    foreach ($dbh->query($cate) as $c) {
+    foreach ($ca as $c) {
 echo'<input value=" '.$c['id'].' " class= "form-check-input" name="categories[]" type="checkbox" id="flexCheckDefault">
           <label class="form-check-label" for="flexCheckDefault">'.$c['nom'].' </label>';
 

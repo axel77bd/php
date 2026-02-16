@@ -8,15 +8,8 @@ if (isset($_GET['user'])) {
 }
 if ($user) {
     // nous ecrivons la requête permettant d'identifier une catégorie
-    $sql = "select id,nom,prenom, email from user where id=:id";
-    //on prepare la requête en protégeant les  paramètres et en verifiant les types
-    $sql = $dbh->prepare($sql);
-    // on a associe la variable php avec la variable sql
-    $sql->bindParam(':id', $user, PDO::PARAM_INT);
-    // on execute la requête
-    $sql->execute();
-    //on récupère la ligne correspondant a la reponse de la requête ou la valeur null
-    $row = $sql->fetch();
+    $select2= new User($dbh);
+    $row=$select2->select($user);
     // si la ligne est null c'est que la categorie n'existe pas
     if (($row == null)) {
         echo "il y a un problèmme d'identifiant, l'utilisateur n\'existe pas ";
@@ -62,17 +55,14 @@ if ($user) {
         if (!empty($password)) {
             echo 'le mot de passe n\'est pas vide ';
             $password = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "update user set nom=:nom,prenom=:prenom, password=:password where id=:id";
+           $modif2= new User($dbh);
+           $modif2->up2($name,$prenom,$id,$password);
         } else {
-            $sql = "update user set nom=:nom,prenom=:prenom where id=:id";
+           $modif3=new User($dbh);
+           $modif3->$sql = "update user set nom=:nom,prenom=:prenom where id=:id";
         }
-        $sql = $dbh->prepare($sql);
-        $sql->bindParam(':nom', $name, PDO::PARAM_STR);
-        $sql->bindParam(':prenom', $prenom, PDO::PARAM_STR);
-        $sql->bindParam(':id', $id, PDO::PARAM_INT);
-        if (!empty($password)) {
-            $sql->bindParam(':password', $password, PDO::PARAM_STR);
-        }
+       
+      
 
         $sql->execute();
         //header('Location:index.php?page=listeutilisateurs');

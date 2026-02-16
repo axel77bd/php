@@ -12,11 +12,8 @@ if (isset($_SESSION['login'])) {
             //var_dump($users);
             foreach ($users as $user) {
                 //echo $user . ' ';
-                $sql = 'delete from user where id=:id';
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':id', $user, PDO::PARAM_INT);
-                $sql->execute();
-
+               $u= new User($user);
+               $u->delete($user);
             }
 
         }
@@ -29,24 +26,20 @@ if (isset($_SESSION['login'])) {
                 $r = 'admin';
             }
 
-            $sql = $dbh->prepare(" update user set role= :role where id=:id ");
-            //j'associe une variable de la requete avec une variable php en precisant sont type
-            $sql->bindParam(':role', $r, PDO::PARAM_STR);
-            $sql->bindParam(':id', $_GET['user'], PDO::PARAM_INT);
-            $r = $sql->execute();
+            $ut= new User($dbh);
+            $sr=$ut->update($r,$user);
         }
         if ((isset($_GET['user'])) && (isset($_GET['action']))) {
             if ($_GET['action'] == 'supprimer') {
-                $sql = 'delete from user where id=:id';
-                $sql = $dbh->prepare($sql);
-                $sql->bindParam(':id', $_GET['user'], PDO::PARAM_INT);
-                $r = $sql->execute();
+                $u= new User($user);
+               $u->delete($_GET['user']);
             }
         }
-        $sql = 'SELECT nom, prenom, email, datedepublication,role,id FROM user ORDER BY datedepublication desc';
+        $ut= new User($dbh);
+        $uts =$ut->select();
         echo '<form action="index.php?page=listeutilisateurs" method="post">';
         echo "<table> <tr> <th>nom</th> <th>prenom</th> <th>email</th> <th>datedepublication</th><th>role</th><th>suppression</th> <th>modifier</th><th></th> </tr>";
-        foreach ($dbh->query($sql) as $row) {
+        foreach ($uts as $row) {
             echo "<tr> <td>";
             echo $row['nom'];
             echo "</td> <td>";

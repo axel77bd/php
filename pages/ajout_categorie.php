@@ -12,9 +12,8 @@ if (isset($_SESSION['login'])) {
                  $validecategoriet=true;
               }
              if ($validecategoriet){
-                $sql = $dbh->prepare("INSERT INTO categorie(`nom`) values(:categorie)");
-                $sql->bindParam(':categorie', $categorie, PDO::PARAM_STR);
-                $r = $sql->execute();
+                $ajoutca= new Categorie($categorie);
+                $sr->ajoutcate($categorie);
                 if($r){
                     echo "catégorie ajouter ";
                   }

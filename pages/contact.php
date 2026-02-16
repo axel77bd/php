@@ -26,25 +26,15 @@ if (isset($_POST['valider'])) {
         }
 
         // on protege l'inscription en vérifiant que les données ne sont pas vides
-        if ((!empty($sujet)) && (!empty($email)) && (!empty($contenu)))
-        // on prépare  une requête  d'insertion qui associe une colonne de la table avec une donnée
-        {
-            $sql = $dbh->prepare("INSERT INTO conctact(`sujet`, `email`, `contenu`) VALUES (:sujet, :email, :contenu)");
-        }
+        if ((!empty($sujet)) && (!empty($email)) && (!empty($contenu))) {
 
-        //j'associe une variable de la requete avec une variable php en precisant sont type
-        $sql->bindParam(':sujet', $sujet, PDO::PARAM_STR);
-        $sql->bindParam(':email', $email, PDO::PARAM_STR);
-        $sql->bindParam(':contenu', $contenu, PDO::PARAM_STR);
-        // j'execute la requête prépare et je met le resultat dans $r
-        $r = $sql->execute();
-        // si $r=vrai alors l'inscription est réussie
-        if ($r) {
-            echo "ajout réussie ";
-        } else {
-            echo "echec de l'ajout ";
+            $conct = new Contact($dbh);
+            $conct->insert($sujet, $email, $contenu);
         }
     }
+
+    // on prépare  une requête  d'insertion qui associe une colonne de la table avec une donnée
+
 }
 ?>
  <h1 class="text-dark text-center">Conctact</h1>

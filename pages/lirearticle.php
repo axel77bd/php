@@ -11,7 +11,7 @@ if (isset($_GET['Article'])) {
 
 if ($Article) {
     $cato = new Article($dbh);
-    $row = $cato->selectArticle($article);
+    $row = $cato->selectArticle($Article);
     if (($row == null)) {
         echo "l'article  n\'existe pas ";
     } else {
@@ -29,12 +29,8 @@ if ($Article) {
   </div>';
 
     }
-
-    $sqlcomment = "SELECT commentaire.contenu, commentaire.titre, user.image,user.nom,user.prenom  from commentaire inner join user on commentaire.iduser = user.id  where idarticle = :idarticle";
-    $sqlcomment = $dbh->prepare($sqlcomment);
-    $sqlcomment->bindParam(':idarticle', $Article, PDO::PARAM_INT);
-    $sqlcomment->execute();
-    $comments = $sqlcomment->fetchAll();
+$com= new Commentaire($dbh);
+$comments=$com->comArticle($Article);
 
     if (isset($_SESSION['login'])) {
 
@@ -45,14 +41,8 @@ if ($Article) {
             if (empty($sujet) && empty($contenu)) {
                 echo 'veuillez saisir un champ';
             } else {
-                $sqlinsert = "insert into commentaire (titre, contenu,datedepublication,moderer,idarticle,iduser) values(:titre, :contenu, :datedepublication,false,:idarticle,:iduser)";
-                $sqlinsert = $dbh->prepare($sqlinsert);
-                $sqlinsert->bindParam(':titre', $sujet, PDO::PARAM_STR);
-                $sqlinsert->bindParam(':contenu', $contenu, PDO::PARAM_STR);
-                $sqlinsert->bindParam(':datedepublication', $datedepublication, PDO::PARAM_STR);
-                $sqlinsert->bindParam(':idarticle', $Article, PDO::PARAM_INT);
-                $sqlinsert->bindParam(':iduser', $_SESSION['id'], PDO::PARAM_INT);
-                $sqlinsert->execute();
+                $coms= new Commentaire($dbh);
+                $coms->insertCom($sujet,$contenu,$datedepublication, $Article);
             }
 
         }
