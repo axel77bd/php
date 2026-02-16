@@ -1,0 +1,32 @@
+{% extends "base.html.twig" %}
+ {% block title %}{{parent()}}Accueil{% endblock %}  
+ {% block content %}
+ <div class="container text-center">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10  text-center">
+<h1>BIENVENUE SUR MON SITE </h1>
+<div class="row row-cols-1 row-cols-md-4 g-4">
+{% for article in articles %}
+    <div class="col">
+    <div class="card " style=" ">
+  <img src="images/{{article.image}}  " class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{article.sujet}}</h5>
+    <p class="card-text">{{article.contenu}}...</p>
+    <a href="index.php?page=lirearticle&Article={{article.id}}" class="btn btn-primary">lire la suite </a>
+
+  </div>
+  <div class="card-footer">
+  {{article.datedepublication}}
+  </div>
+  </div>
+</div>
+{% endfor %}
+
+
+
+</div>
+</div>
+</div>
+</div>
+ {% endblock %} 

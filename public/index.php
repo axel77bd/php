@@ -2,13 +2,19 @@
 session_start();
     // une fonction qui permet d'afficher le contenu d'une variable y compris les tableaux 
     //var_dump($_GET);
-    require_once '../pages/header.php';
+    //require_once '../pages/header.php';
     require_once '../db/mariadb.php';
     require_once '../classes/class_article.php';
     require_once '../classes/class_user.php';
     require_once '../classes/class_categorie.php';
     require_once '../classes/class_commentaire.php';
     require_once '../classes/class_contact.php';
+    require_once '../vendor/autoload.php';
+    use Twig\Environment;
+    use Twig\Loader\FilesystemLoader;
+
+    $loader = new FilesystemLoader('../templates');
+    $twig = new Environment($loader);
     
 ?>
 <?php
@@ -42,5 +48,5 @@ if($dbh!=null){
 ?>
 
 <?php   
-    require_once '../pages/footer.php';
+   // require_once '../pages/footer.php';
 ?>

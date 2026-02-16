@@ -1,5 +1,5 @@
 <?php
-class Commmentaire
+class Commentaire
 {
     private $dbh;
     //constructeur qui permet de relier la variable de connexion afin la class la conserve
