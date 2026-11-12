@@ -5,6 +5,20 @@ Il permet de publier des articles, de les commenter, de gérer des catégories e
 
 Le HTML est entièrement séparé du PHP grâce au moteur de templates [Twig](https://twig.symfony.com/).
 
+## Aperçu
+
+**Page d'accueil** : la liste des articles, du plus récent au plus ancien.
+
+![Page d'accueil](docs/accueil.png)
+
+**Profil** : les informations de l'utilisateur connecté, avec sa photo.
+
+![Page de profil](docs/profil.png)
+
+**Liste des utilisateurs** (réservée aux administrateurs) : changement de rôle, modification et suppression.
+
+![Liste des utilisateurs](docs/utilisateurs.png)
+
 ## Fonctionnalités
 
 - **Articles** : liste sur l'accueil, lecture, ajout avec image, modification
