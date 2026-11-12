@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}ListeContact{% endblock %}
+{% block content %}
+  <h1>Liste des contact</h1>
+  <table class="table">
+    <tr> <th>Sujet</th> <th>email</th> <th>contenu</th> </tr>
+    {% for contact in contacts %}
+      <tr>
+        <td>{{ contact.sujet }}</td>
+        <td>{{ contact.email }}</td>
+        <td>{{ contact.contenu|striptags|nl2br }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

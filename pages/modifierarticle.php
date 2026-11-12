@@ -1,99 +1,55 @@
 <?php
-if (isset($_SESSION['login'])) {
-    if ($_SESSION['role'] == 'admin' || $_SESSION['id']) {
-        $article = null;
-//verifie si il est existe dans le tableau $_GET(url) la categorie
-        if (isset($_GET['Article'])) {
-            //je récupère la valeur catégorie dans la variable $categorie
-            $article = $_GET['Article'];
-        }
+if (!isset($_SESSION['login'])) {
+    $messages[] = 'connectez vous';
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
+} else {
+    $idArticle = null;
+    //verifie si il est existe dans le tableau $_GET(url) l'article
+    if (isset($_GET['Article'])) {
+        $idArticle = $_GET['Article'];
+    }
 
-//si $categorie n'est pas null
-        if ($article) {
-            $cato = new Article($dbh);
-            $row = $cato->selectArticle($article);
+    $row = null;
+    if ($idArticle) {
+        $cato = new Article($dbh);
+        $row = $cato->selectArticle($idArticle);
+    }
 
-            if (isset($_POST['modifier'])) {
-                $sujet = $_POST['sujet'];
-                $contenu = $_POST['contenu'];
-                $annuler = false;
-                if (isset($_FILES['image'])) {
-                    if (!empty($_FILES['image']['name'])) {
+    if (!$row) {
+        $messages[] = "l'article n'existe pas";
+        echo $twig->render('message.html.twig', ['messages' => $messages]);
+    } else {
+        if (isset($_POST['modifier'])) {
+            $sujet = $_POST['sujet'];
+            $contenu = $_POST['contenu'];
+            $annuler = false;
+            // par défaut on garde l'image actuelle de l'article
+            $image = $row['image'];
 
-                        //on recupère le nom temporaire du fichier
-                        $tmp = $_FILES['image']['tmp_name'];
-                        $name = $_FILES['image']['name'];
-                        $image = uniqid() . substr($name, -5);
-                        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (empty($sujet) || empty($contenu)) {
+                $messages[] = 'veuillez saisir un sujet et un contenu';
+                $annuler = true;
+            }
 
-                        $ok = array("png", "jpg", "jpeg");
-
-                        if (!in_array($ext, $ok)) {
-                            echo 'l\'extension n\'est pas accepté ';
-                            $image = null;
-                            $anciennom = null;
-                            $annuler = true;
-                        }
-
-                        if ($_FILES['image']['size'] > 500000) {
-
-                            echo 'fichier volumineux ';
-                            $annuler = true;
-
-                        }
-
-                        if (!$annuler) {
-                            $anciennom = 'images/' . $image;
-                            if (!empty($row['image']) && file_exists($anciennom)) {
-                                unlink($anciennom);
-                            }
-
-                            move_uploaded_file($tmp, 'images/' . $image);
-                            $art = new Article($dbh);
-                            $art->update($image, $article, $sujet, $contenu);
-
-                            header('Location:index.php?page=home');
-                        }
-
-                    } else {
-                        $image = null;
-                        $anciennom = null;
-                    }
+            // si une nouvelle image a été envoyée
+            if (!$annuler && isset($_FILES['image']) && !empty($_FILES['image']['name'])) {
+                $nouvelle = enregistrerImage($_FILES['image'], $dossierImages, array("png", "jpg", "jpeg"), $messages);
+                if ($nouvelle == null) {
+                    $annuler = true;
+                } else {
+                    // on supprime l'ancienne image du dossier et on garde la nouvelle
+                    supprimerImage($row['image'], $dossierImages);
+                    $image = $nouvelle;
                 }
             }
-            if (($row == null)) {
-                echo "il y a un problèmme d'identifiant, l'article n\'existe pas ";
-            } else {
-                echo '<form action="index.php?page=modifierarticle&Article=' . $row['id'] . '" method="post" enctype="multipart/form-data">
-  <div class="row">
-    <div class="col-12 col-md-6">
-    <div>
-    <div>
-    <label for="exampleInputSujet" class="form-label mt-4">  Sujet</label>
-    <input name="sujet" type="text" value="' . $row['sujet'] . '" class="form-control" id="exampleInputSujet" aria-describedby="sujetHelp" placeholder="Enter le Sujet">
-  </div>
-  <div>
-    <label for="exampleTextarea" class="form-label mt-4">Contenu</label>
-    <textarea name="contenu" class="form-control" id="exampleTextarea" rows="3">' . $row['contenu'] . '</textarea>
-  </div>
-      <input name="image" value="' . $row['image'] . '"class="form-control" type="file"/>
-      <div>
-      <input name="id" value="' . $row['id'] . '" type="hidden"/>
-      </div>
-      <div>
-                <button name="modifier" type="submit" class="btn btn-primary mt-4">modifier</button>
-      </div>
-    </div>
-    </div>
-    </div>
-    </form>
 
-    ';
+            if (!$annuler) {
+                $art = new Article($dbh);
+                $art->update($image, $row['id'], $sujet, $contenu);
+                rediriger('index.php?page=home', 'article modifié');
             }
-        } else {
-
-            echo 'l\'article n\'existe pas';
         }
 
+        echo $twig->render('modifierarticle.html.twig', ['article' => $row, 'messages' => $messages]);
     }
 }

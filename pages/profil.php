@@ -1,154 +1,66 @@
 <?php
-if (isset($_SESSION['login'])) {
-    $co= new User($dbh);
-    $row =$co->connexion() ;
-    if (($row == null)) {
-        echo "il y a un problèmme d'identifiant";
+if (!isset($_SESSION['login'])) {
+    $messages[] = "vous n'avez pas les droits";
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
+} else {
+    $co = new User($dbh);
+    // on récupère les informations de l'utilisateur connecté grâce à son email
+    $row = $co->connexion($_SESSION['login']);
+    if (!$row) {
+        $messages[] = "il y a un problème d'identifiant";
+        echo $twig->render('message.html.twig', ['messages' => $messages]);
     } else {
-
         // Formulaire pour modifier le mot de passe
         if (isset($_POST['modifier'])) {
             $password = $_POST['password'];
-
             if (empty($password)) {
-                echo 'saisir le mot de passe ';
+                $messages[] = 'saisir le mot de passe';
+            } elseif ($password != $_POST['confirmation']) {
+                $messages[] = 'les mots de passe ne sont pas identiques';
             } else {
-
-                $confirmation = $_POST['confirmation'];
-                if ($password == $confirmation) {
-                    $password = password_hash($password, PASSWORD_DEFAULT);
-                   $upPassw= new User($dbh);
-                    $r=$upPassw->upPass($password);
-
-                    // si $r=vrai alors l'inscription est réussie
-                    if ($r) {
-                        echo "mot de passe modifie";
-                    } else {
-                        echo "echec de la modification ";
-                    }
-
+                $password = password_hash($password, PASSWORD_DEFAULT);
+                if ($co->upPass($password)) {
+                    $messages[] = "mot de passe modifié";
                 } else {
-                    echo 'les mots de passe ne sont pas identiques ';
+                    $messages[] = "echec de la modification";
                 }
             }
         }
         // Fin Formulaire pour modifier le mot de passe
 
-        //formulaire pour modifier  l'email 
+        //formulaire pour modifier  l'email
         if (isset($_POST['envoyer'])) {
             $email = $_POST['email'];
             if (empty($email)) {
-
+                $messages[] = 'saisir un email';
+            } elseif ($co->selectEmail($email)) {
+                $messages[] = 'email déjà utilisé';
+            } elseif ($co->upEmail($email, $row['id'])) {
+                // l'email sert d'identifiant de connexion : on met à jour la session
+                $_SESSION['login'] = $email;
+                rediriger('index.php?page=profil', 'email modifié');
             } else {
-                $selectE= new User($dbh);
-                $row2=$selectE->selectEmail( $email);
-                if ($row2 == null) {
-                    $modifE= new User ($dbh);
-                    $r=$modifE->upEmail( $email,$row['id']);
-
-                  
-                    // si $r=vrai alors l'inscription est réussie
-                    if ($r) {
-                        echo "email modifie";
-                        $_SESSION['login'] = $email;
-                        header('Location:index.php?page=profil');
-                    } else {
-                        echo "echec de la modification ";
-                    }
-                } else {
-                    echo 'email déjà utilisé ';
-                }
-
+                $messages[] = "echec de la modification";
             }
-            //fin  de formulaire 
-
         }
-        $annuler = false;
-        //formulaire de  modification de photo 
-        //var_dump($_FILES);
+        //fin  de formulaire
 
+        //formulaire de  modification de photo
         if (isset($_POST['envoyerfile'])) {
-
-            if (isset($_FILES['image'])) {
-                if (!empty($_FILES['image']['name'])) {
-
-                    //var_dump($_FILES);
-                   
-                    //on recupère le nom temporaire du fichier
-                    $tmp = $_FILES['image']['tmp_name'];
-                    $name = $_FILES['image']['name'];
-                    $image = uniqid() . substr($name, -5);
-                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-                    
-    
-                    $ok = array("png", "jpg", "jpeg");
-
-                    if (!in_array($ext, $ok)) {
-                        echo 'l\'extension n\'est pas accepté ';
-                        $image = null;
-                        $anciennom = null;
-                        $annuler = true;
-                    }
-    
-                    if ($_FILES['image']['size'] > 500000) {
-    
-                        echo 'fichier volumineux ';
-                        $annuler = true;
-    
-                    }
-    
-                    if (!$annuler) {
-                        $anciennom= 'images/' . $image;
-                        if(!empty($row['image'])&& file_exists($anciennom))
-                        unlink($anciennom);
-                    
-                        move_uploaded_file($tmp, 'images/' . $image);
-                        $modifI= new User ($dbh);
-                        $modifI->upImage($image);
-                        
-                        
-                        header('Location:index.php?page=profil');
-                    }
-    
-                } else {
-                    $image = null;
-                    $anciennom = null;
+            if (isset($_FILES['image']) && !empty($_FILES['image']['name'])) {
+                $image = enregistrerImage($_FILES['image'], $dossierImages, array("png", "jpg", "jpeg"), $messages);
+                if ($image != null) {
+                    // on supprime l'ancienne photo du dossier puis on enregistre la nouvelle
+                    supprimerImage($row['image'], $dossierImages);
+                    $co->upImage($image);
+                    rediriger('index.php?page=profil', 'photo modifiée');
                 }
+            } else {
+                $messages[] = 'veuillez choisir une image';
             }
-
         }
-        //fin de formulaire 
+        //fin de formulaire
 
-
-        echo '<br/><h3> NOM : ' . $row['nom'] . '</h2><br/> <h3>PRENOM : ' . $row['prenom'] . '</h3><br/> EMAIL :' . $row['email'];
-        echo '<img width="200px" class="img-thumbnail" src="images/'.$row['image'].'" />';
-        echo '
-        <button class="btn btn-primary" name="envoyer" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-        modifier vos information
-      </button>
-      <div style="min-height: 120px;">
-      <div class="collapse collapse-horizontal" id="collapseWidthExample">
-        <div class="card card-body" style="width: 300px;">
-
-        <form action="index.php?page=profil" method="post" >
-        mot de passe : <input type="password" name="password"/>
-        confirmation : <input type="password" name="confirmation"/>
-        <button name="modifier" type="submit" class="btn btn-primary mt-4">modifier le mot de passe </button>
-        </form>';
-        echo '<form action="index.php?page=profil" method="post">
-        EMAIL : <input type="email" name="email"/>
-        <button name="envoyer" type="submit" class="btn btn-primary mt-4">modifie l\'email</button>
-        </form>
-        <form action="index.php?page=profil" method="post" enctype="multipart/form-data">
-        profil : <input type="file"  class="form-control" name="image"/>
-        <button name="envoyerfile" type="submit" class="btn btn-primary mt-4">modifier votre profil</button>
-        </form>
-
-
-        </div>';
-
+        echo $twig->render('profil.html.twig', ['user' => $row, 'messages' => $messages]);
     }
-
-} else {
-    echo 'vous n\'avez pas les droit';
 }

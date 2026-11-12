@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}ListeUtilisateurs{% endblock %}
+{% block content %}
+  <div class="text-center">
+    <h1>liste des utilisateurs</h1>
+    <form action="index.php?page=listeutilisateurs" method="post">
+      <table class="table">
+        <tr> <th>nom</th> <th>prenom</th> <th>email</th> <th>datedepublication</th> <th>role</th> <th>suppression</th> <th>modifier</th> <th></th> </tr>
+        {% for user in users %}
+          <tr>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.datedepublication }}</td>
+            {# un clic sur le rôle le change (admin <-> user) #}
+            <td><a href="index.php?page=listeutilisateurs&user={{ user.id }}&role={{ user.role }}">{{ user.role }}</a></td>
+            <td><a class="btn btn-danger" href="index.php?page=listeutilisateurs&user={{ user.id }}&action=supprimer">supprimer</a></td>
+            <td><a class="btn btn-primary" href="index.php?page=modifierutlisateur&user={{ user.id }}">modifier</a></td>
+            <td><input value="{{ user.id }}" class="form-check-input" name="users[]" type="checkbox"></td>
+          </tr>
+        {% endfor %}
+      </table>
+      {# supprime tous les utilisateurs cochés #}
+      <button name="valider" type="submit" class="btn btn-primary mt-4">supprimer la sélection</button>
+    </form>
+  </div>
+{% endblock %}

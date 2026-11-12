@@ -1,46 +1,24 @@
 <?php
-if (isset($_SESSION['login'])) {
-    if ($_SESSION['role'] == 'admin') {
-        if(isset($_POST['valider'])){
-            $categorie =htmlentities($_POST['categorie']) ;
-            if (empty($categorie)) {
-                echo "veuillez saisir une categorie ";
-                $validecategoriet=false;
-              
-              }else{
-                 echo "$categorie";
-                 $validecategoriet=true;
-              }
-             if ($validecategoriet){
-                $ajoutca= new Categorie($categorie);
-                $sr->ajoutcate($categorie);
-                if($r){
-                    echo "catégorie ajouter ";
-                  }
-                  else{
-                    echo "pas de catégorie ajouter ";
-                  }
-             }
-        }           
-        
-       echo '<form action="index.php?page=ajout_categorie" method="post">
-        <div class="row">
-          <div class="col-12 col-md-6">
-          <div>
-            <label for="exampleInputSujet" class="form-label mt-4"> categorie</label>
-            <input name="categorie" type="text" class="form-control" id="exampleInputSujet" aria-describedby="sujetHelp" placeholder="ENTRER LA CATEGORIE ">
-          </div>
-      <div>
-          <button name="valider" type="submit" class="btn btn-primary mt-4">valider</button>
-      </div>
-      </form> ';
-        
-    } else {
-        echo 'vous êtes pas administrateur ';
-    }
+if (!isset($_SESSION['login'])) {
+    $messages[] = 'connectez vous';
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
+} elseif ($_SESSION['role'] != 'admin') {
+    $messages[] = "vous n'êtes pas administrateur";
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
 } else {
-    echo 'connectez vous';
+    if (isset($_POST['valider'])) {
+        $categorie = $_POST['categorie'];
+        if (empty($categorie)) {
+            $messages[] = "veuillez saisir une categorie";
+        } else {
+            $ajoutca = new Categorie($dbh);
+            if ($ajoutca->ajoutcate($categorie)) {
+                $messages[] = "catégorie ajoutée";
+            } else {
+                $messages[] = "pas de catégorie ajoutée";
+            }
+        }
+    }
+
+    echo $twig->render('ajout_categorie.html.twig', ['messages' => $messages]);
 }
-
-
-?>

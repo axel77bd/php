@@ -1,0 +1,39 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}Profil{% endblock %}
+{% block content %}
+  <h3>NOM : {{ user.nom }}</h3>
+  <h3>PRENOM : {{ user.prenom }}</h3>
+  <p>EMAIL : {{ user.email }}</p>
+  {% if user.image %}
+    <img width="200" class="img-thumbnail" src="images/{{ user.image }}" alt="photo de profil">
+  {% endif %}
+
+  <div class="mt-4">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfil" aria-expanded="false" aria-controls="collapseProfil">
+      modifier vos informations
+    </button>
+  </div>
+  <div class="collapse" id="collapseProfil">
+    <div class="card card-body mt-2" style="max-width: 400px;">
+      <form action="index.php?page=profil" method="post">
+        <label class="form-label">mot de passe :</label>
+        <input type="password" class="form-control" name="password">
+        <label class="form-label mt-2">confirmation :</label>
+        <input type="password" class="form-control" name="confirmation">
+        <button name="modifier" type="submit" class="btn btn-primary mt-2">modifier le mot de passe</button>
+      </form>
+      <hr>
+      <form action="index.php?page=profil" method="post">
+        <label class="form-label">EMAIL :</label>
+        <input type="email" class="form-control" name="email">
+        <button name="envoyer" type="submit" class="btn btn-primary mt-2">modifier l'email</button>
+      </form>
+      <hr>
+      <form action="index.php?page=profil" method="post" enctype="multipart/form-data">
+        <label class="form-label">photo de profil :</label>
+        <input type="file" class="form-control" name="image">
+        <button name="envoyerfile" type="submit" class="btn btn-primary mt-2">modifier votre photo</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

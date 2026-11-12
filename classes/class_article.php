@@ -16,6 +16,7 @@ class Article
         $sql->execute();
         return $sql->fetchAll();
     }
+    // retourne vrai si l'ajout a réussi (c'est la page qui choisit le message à afficher)
     public function insert($sujet, $contenu, $image, $anciennom)
     {
         $datedepublication = date("Y-m-d H:i:s");
@@ -27,16 +28,10 @@ class Article
         $sql->bindParam(':datedepublication', $datedepublication, PDO::PARAM_STR);
         $sql->bindParam(':image', $image, PDO::PARAM_STR);
         $sql->bindParam(':anciennom', $anciennom, PDO::PARAM_STR);
-        // j'execute la requête prépare et je met le resultat dans $r
-        $r = $sql->execute();
-        // si $r=vrai alors l'inscription est réussie
-        if ($r) {
-            echo "ajout réussie ";
-        } else {
-            echo "echec de l'ajout ";
-        }
+        // j'execute la requête prépare et je retourne le resultat
+        return $sql->execute();
     }
-    public function update($image,$article,$sujet,$contenu)
+    public function update($image, $article, $sujet, $contenu)
     {
         $sql = "update Article set image=:image, sujet=:sujet,contenu=:contenu where id=:id";
         $sql = $this->dbh->prepare($sql);
@@ -44,16 +39,15 @@ class Article
         $sql->bindParam(':id', $article, PDO::PARAM_INT);
         $sql->bindParam(':sujet', $sujet, PDO::PARAM_STR);
         $sql->bindParam(':contenu', $contenu, PDO::PARAM_STR);
-        $sql->execute();
+        return $sql->execute();
     }
-    
-    public function selectArticle($Article){
+
+    public function selectArticle($Article)
+    {
         $sql = " SELECT id,sujet,image, contenu, datedepublication FROM Article where id=:id";
         $sql = $this->dbh->prepare($sql);
         $sql->bindParam(':id', $Article, PDO::PARAM_INT);
         $sql->execute();
         return $sql->fetch();
-
-    }    
-    
+    }
 }

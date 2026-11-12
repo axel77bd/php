@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}Modifier Categorie{% endblock %}
+{% block content %}
+  <h1>modifier categorie</h1>
+  <form action="index.php?page=modifiercategorie" method="post">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div>
+          <label for="exampleInputSujet" class="form-label mt-4">categorie</label>
+          <input name="categorie" value="{{ categorie.nom }}" type="text" class="form-control" id="exampleInputSujet" placeholder="ENTRER LA CATEGORIE">
+          <input name="id" value="{{ categorie.id }}" type="hidden">
+        </div>
+        <div>
+          <button name="valider" type="submit" class="btn btn-primary mt-4">valider</button>
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

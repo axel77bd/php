@@ -1,0 +1,29 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}Modifier Article{% endblock %}
+{% block content %}
+  <h1 class="text-dark text-center">Modifier l'article</h1>
+  <form action="index.php?page=modifierarticle&Article={{ article.id }}" method="post" enctype="multipart/form-data">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div>
+          <label for="exampleInputSujet" class="form-label mt-4">Sujet</label>
+          <input name="sujet" type="text" value="{{ article.sujet }}" class="form-control" id="exampleInputSujet" placeholder="Enter le Sujet">
+        </div>
+        <div>
+          <label for="exampleTextarea" class="form-label mt-4">Contenu</label>
+          <textarea name="contenu" class="form-control" id="exampleTextarea" rows="3">{{ article.contenu|striptags }}</textarea>
+        </div>
+        <div class="mt-4">
+          {% if article.image %}
+            <img width="200" class="img-thumbnail mb-2" src="images/{{ article.image }}" alt="image actuelle">
+          {% endif %}
+          {# si on ne choisit pas de nouvelle image, l'article garde l'image actuelle #}
+          <input name="image" class="form-control" type="file">
+        </div>
+        <div>
+          <button name="modifier" type="submit" class="btn btn-primary mt-4">modifier</button>
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

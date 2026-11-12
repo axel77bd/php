@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}Modifier Utilisateur{% endblock %}
+{% block content %}
+  <h1>modifier utilisateur</h1>
+  <form action="index.php?page=modifierutlisateur" method="post">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div>
+          <label for="exampleInputEmail1" class="form-label mt-4">Email address</label>
+          {# l'email est affiché mais ne se modifie pas ici (il se modifie dans le profil) #}
+          <input type="email" value="{{ user.email }}" class="form-control" id="exampleInputEmail1" disabled>
+        </div>
+        <div>
+          <label for="exampleInputPassword1" class="form-label mt-4">Password (laisser vide pour ne pas le changer)</label>
+          <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" autocomplete="off">
+        </div>
+        <div>
+          <label for="exampleInputName" class="form-label mt-4">Nom</label>
+          <input name="name" type="text" value="{{ user.nom }}" class="form-control" id="exampleInputName" placeholder="Nom" autocomplete="off">
+        </div>
+        <div>
+          <label for="exampleInputFirstName" class="form-label mt-4">Prénom</label>
+          <input name="prenom" type="text" value="{{ user.prenom }}" class="form-control" id="exampleInputFirstName" placeholder="Prénom" autocomplete="off">
+          <input name="id" value="{{ user.id }}" type="hidden">
+        </div>
+        <button name="valider" type="submit" class="btn btn-primary mt-4">valider</button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

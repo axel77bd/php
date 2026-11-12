@@ -1,45 +1,29 @@
 <?php
-if (isset($_SESSION['login'])) {
-    if ($_SESSION['role'] == 'admin') {
-        echo '<h1>Liste des catégories </h1>';
-        if ((isset($_GET['categorie'])) && (isset($_GET['action']))) {
-            if ($_GET['action'] == 'supprimer') {
-               $ca= new Categorie($dbh);
-               $ca->delete($_GET['categorie']);
-            }
-        }
-        if (isset($_POST['valider'])) {
-            $categories = $_POST['categories'];
-            //var_dump($users);
-            foreach ($categories as $categorie) {
-                //echo $user . ' ';
-                $ca= new Categorie($dbh);
-               $ca->delete($categorie);
-
-            }
-
-        }
-        $cates= new Categorie($dbh);
-$ca=$cates->select();
-        echo '<form action="index.php?page=listedescategorie" method="post">';
-        echo "<table> <tr> <th>nom</th> <th>modifier</th><th>suppression</th> </tr>";
-        foreach ($ca as $row) {
-            echo "<tr> <td>";
-            echo $row['nom'] . "\t";
-
-            echo '</td><td><a class="btn btn-primary" href="index.php?page=modifiercategorie&categorie=' . $row['id'] . '">modifier</a>';
-            echo '</td><td> <a class="btn btn-danger "href="index.php?page=listedescategorie&categorie=' . $row['id'] . '&action=supprimer">supprimer</a></td>
-           <td><input value=" ' . $row['id'] . ' " class= "form-check-input" name="categories[]" type="checkbox" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault"> </label></td>';
-            echo "</td></tr>";
-        }
-        echo "</table>";
-        echo '<button name=valider type="submit" class="btn btn-primary mt-4 ">valider</button>';
-        echo '</form>';
-
-    } else {
-        echo 'vous êtes pas administrateur ';
-    }
+if (!isset($_SESSION['login'])) {
+    $messages[] = 'connectez vous';
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
+} elseif ($_SESSION['role'] != 'admin') {
+    $messages[] = "vous n'êtes pas administrateur";
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
 } else {
-    echo 'connectez vous';
+    $ca = new Categorie($dbh);
+
+    // suppression d'une catégorie avec le bouton supprimer
+    if ((isset($_GET['categorie'])) && (isset($_GET['action']))) {
+        if ($_GET['action'] == 'supprimer') {
+            $ca->delete($_GET['categorie']);
+            rediriger('index.php?page=listedescategorie', 'catégorie supprimée');
+        }
+    }
+    // suppression de plusieurs catégories avec les cases à cocher
+    if (isset($_POST['valider']) && isset($_POST['categories'])) {
+        foreach ($_POST['categories'] as $categorie) {
+            $ca->delete($categorie);
+        }
+        $messages[] = 'catégories supprimées';
+    }
+
+    $categories = $ca->select();
+
+    echo $twig->render('listedescategorie.html.twig', ['categories' => $categories, 'messages' => $messages]);
 }

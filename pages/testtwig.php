@@ -1,4 +1,2 @@
 <?php
-echo $twig->render('testtwig.html.twig',[]);
-
-?>
+echo $twig->render('testtwig.html.twig', ['messages' => $messages]);

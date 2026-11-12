@@ -1,35 +1,43 @@
-
 <?php
-
-$Article = null;
+$idArticle = null;
 if (isset($_GET['Article'])) {
-    //je récupère la valeur catégorie dans la variable
-    $Article = $_GET['Article'];
+    //je récupère l'id de l'article dans la variable
+    $idArticle = $_GET['Article'];
 }
 
-if ($Article) {
+$row = null;
+if ($idArticle) {
     $cato = new Article($dbh);
-    $row = $cato->selectArticle($Article);
+    $row = $cato->selectArticle($idArticle);
 }
 
-
-$com = new Commentaire($dbh);
-$comments = $com->comArticle($Article);
-
-if (isset($_SESSION['login'])) {
-
+if (!$row) {
+    // l'article n'existe pas
+    $messages[] = "l'article n'existe pas";
+    echo $twig->render('message.html.twig', ['messages' => $messages]);
+} else {
+    // formulaire pour commenter l'article
     if (isset($_POST['envoyer'])) {
-        $sujet = $_POST['sujet'];
-        $contenu = $_POST['contenu'];
-        $datedepublication = date('Y-m-d H-i-s');
-        if (empty($sujet) && empty($contenu)) {
-            echo 'veuillez saisir un champ';
+        if (!isset($_SESSION['login'])) {
+            $messages[] = 'connectez vous pour commenter';
         } else {
-            $coms = new Commentaire($dbh);
-            $coms->insertCom($sujet, $contenu, $datedepublication, $Article);
+            $sujet = $_POST['sujet'];
+            $contenu = $_POST['contenu'];
+            $datedepublication = date('Y-m-d H:i:s');
+            if (empty($sujet) || empty($contenu)) {
+                $messages[] = 'veuillez saisir un titre et un contenu';
+            } else {
+                $coms = new Commentaire($dbh);
+                $coms->insertCom($sujet, $contenu, $datedepublication, $idArticle);
+                // on recharge la page : le nouveau commentaire apparaît et
+                // actualiser la page ne renvoie pas le formulaire une deuxième fois
+                rediriger('index.php?page=lirearticle&Article=' . $row['id'], 'commentaire ajouté');
+            }
         }
-
     }
-    echo $twig->render('lirearticle.html.twig', ['article' => $row,'comments'=>$comments]);
+
+    $com = new Commentaire($dbh);
+    $comments = $com->comArticle($idArticle);
+
+    echo $twig->render('lirearticle.html.twig', ['article' => $row, 'comments' => $comments, 'messages' => $messages]);
 }
-?>

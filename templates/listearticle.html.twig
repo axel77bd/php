@@ -1,16 +1,15 @@
 {% extends "base.html.twig" %}
- {% block title %}{{parent()}}ListeArticle{% endblock %}  
- {% block content %}
- <h1>Liste des Articles</h1>
-<table> <tr> <th>Sujet</th> <th>datedepublication</th> <th>modifier</th></tr>
-{% for article in articles %}
-   <tr> <td>
-   {{article.sujet}}
-  </td><td>
-    {{article.datedepublication}}
-    <td><a class="btn btn-info"href="index.php?page=modifierarticle&Article={{article.id}}"> modifier </a> </td>
-    </td></tr>
+{% block title %}{{ parent() }}ListeArticle{% endblock %}
+{% block content %}
+  <h1>Liste des Articles</h1>
+  <table class="table">
+    <tr> <th>Sujet</th> <th>datedepublication</th> <th>modifier</th> </tr>
+    {% for article in articles %}
+      <tr>
+        <td>{{ article.sujet }}</td>
+        <td>{{ article.datedepublication }}</td>
+        <td><a class="btn btn-info" href="index.php?page=modifierarticle&Article={{ article.id }}">modifier</a></td>
+      </tr>
     {% endfor %}
-</table>
-
- {% endblock %} 
+  </table>
+{% endblock %}

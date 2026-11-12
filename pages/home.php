@@ -1,9 +1,4 @@
-
 <?php
 $article = new Article($dbh);
 $articles = $article->select();
-echo $twig->render('home.html.twig',['articles'=>$articles]);
-
-
-
-?>
+echo $twig->render('home.html.twig', ['articles' => $articles, 'messages' => $messages]);

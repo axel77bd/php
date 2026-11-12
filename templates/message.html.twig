@@ -1,0 +1,6 @@
+{% extends "base.html.twig" %}
+{# page qui affiche seulement les messages (ex : "connectez vous", "l'article n'existe pas") #}
+{% block title %}{{ parent() }}Information{% endblock %}
+{% block content %}
+  <a class="btn btn-primary" href="index.php">retour à l'accueil</a>
+{% endblock %}

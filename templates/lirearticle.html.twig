@@ -1,69 +1,71 @@
 {% extends "base.html.twig" %}
- {% block title %}{{parent()}}Lire Article{% endblock %}  
- {% block content %}
- <div class="container text-center">
-<div class="row justify-content-center">
+{% block title %}{{ parent() }}Lire Article{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
     <div class="col-12 col-md-8 text-center">
-<div class="card" style="">
-  <img src="images/{{article.image}}" class="card-img-top" alt="...">
-  <div class="card-body">
-  <div class="card-footer">
-  {{article.datedepublication |date("d-m-Y à H:i")}}
-  </div>
-  <a class="btn btn-info"href="index.php?page=modifierarticle&Article={{article.id}}"> modifier l'article</a>
+      <div class="card">
+        {% if article.image %}
+          <img src="images/{{ article.image }}" class="card-img-top" alt="{{ article.sujet }}">
+        {% endif %}
+        <div class="card-body">
+          <h1 class="card-title">{{ article.sujet }}</h1>
+          {# nl2br remplace les retours à la ligne par des <br> au moment de l'affichage #}
+          <p class="card-text">{{ article.contenu|striptags|nl2br }}</p>
+          {% if session.login is defined %}
+            <a class="btn btn-info" href="index.php?page=modifierarticle&Article={{ article.id }}">modifier l'article</a>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          {{ article.datedepublication|date("d-m-Y à H:i") }}
+        </div>
+      </div>
 
+      {# le formulaire de commentaire est réservé aux personnes connectées #}
+      {% if session.login is defined %}
+        <button class="btn btn-primary mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCommentaire" aria-expanded="false" aria-controls="collapseCommentaire">
+          Commenter cet article
+        </button>
+        <div class="collapse" id="collapseCommentaire">
+          <div class="card card-body text-start">
+            <form action="index.php?page=lirearticle&Article={{ article.id }}" method="post">
+              <div>
+                <label for="exampleInputSujet" class="form-label mt-4">TITRE</label>
+                <input name="sujet" type="text" class="form-control" id="exampleInputSujet" placeholder="ENTRER LE TITRE">
+              </div>
+              <div>
+                <label for="exampleTextarea" class="form-label mt-4">Contenu</label>
+                <textarea name="contenu" class="form-control" id="exampleTextarea" rows="3"></textarea>
+              </div>
+              <div>
+                <button name="envoyer" type="submit" class="btn btn-primary mt-4">valider</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <p class="mt-4"><a href="index.php?page=connexion">Connectez vous</a> pour commenter cet article.</p>
+      {% endif %}
 
-  </div>
-
-
-        
-
-    <button class="btn btn-primary" name="envoyer" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-    Commenter cet article
-  </button>
-  <div style="min-height: 120px;">
-  <div class="collapse collapse-horizontal" id="collapseWidthExample">
-    <div class="card card-body" style="width: 300px;">
-    <form action="index.php?page=lirearticle&Article={{article.id}}" method="post">
-    <div class="row">
- <div class="col-12 col-md-6">
- <div>
-   <label for="exampleInputSujet" class="form-label mt-4"> TITRE</label>
-   <input name="sujet" type="text" class="form-control" id="exampleInputSujet" aria-describedby="sujetHelp" placeholder="ENTRER LE TITRE ">
- </div>
- <div>
-   <label for="exampleTextarea" class="form-label mt-4">Contenu</label>
-   <textarea name="contenu" class="form-control" id="exampleTextarea" rows="3"></textarea>
- </div>
- <div>
-    <button name=envoyer type="submit" class="btn btn-primary mt-4">valider</button>
-</div>
-
-
-   </div>
-   </div>
-  </form>
-  </div>
-  </div>
-      
-{% for comment in comments %}
-    <img width="200px" class="img-thumbnail" src="images/{{comment.image}}" />
-     {{comment.titre}}
-   {{comment.contenu}}
-     {{comment.nom}}
-     {{comment.prenom}}
-     <div>
+      <h2 class="mt-4">Commentaires</h2>
+      {% for comment in comments %}
+        <div class="card mb-3 text-start">
+          <div class="card-body d-flex">
+            {% if comment.image %}
+              <img width="80" class="img-thumbnail me-3" src="images/{{ comment.image }}" alt="">
+            {% endif %}
+            <div>
+              <h5 class="card-title">{{ comment.titre }}</h5>
+              <p class="card-text">{{ comment.contenu|nl2br }}</p>
+              <small>{{ comment.prenom }} {{ comment.nom }}</small>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p>Aucun commentaire pour le moment.</p>
+      {% endfor %}
     </div>
-
-{% endfor %}
-
-</div>
-<div class="col-12 col-md-4 text-center">
-    pub
-</div>
-
-</div>
-<div
-
- 
- {% endblock %} 
+    <div class="col-12 col-md-4 text-center">
+      pub
+    </div>
+  </div>
+{% endblock %}

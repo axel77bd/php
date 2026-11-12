@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ parent() }}ListeCategorie{% endblock %}
+{% block content %}
+  <h1>Liste des catégories</h1>
+  <form action="index.php?page=listedescategorie" method="post">
+    <table class="table">
+      <tr> <th>nom</th> <th>modifier</th> <th>suppression</th> <th></th> </tr>
+      {% for categorie in categories %}
+        <tr>
+          <td>{{ categorie.nom }}</td>
+          <td><a class="btn btn-primary" href="index.php?page=modifiercategorie&categorie={{ categorie.id }}">modifier</a></td>
+          <td><a class="btn btn-danger" href="index.php?page=listedescategorie&categorie={{ categorie.id }}&action=supprimer">supprimer</a></td>
+          <td><input value="{{ categorie.id }}" class="form-check-input" name="categories[]" type="checkbox"></td>
+        </tr>
+      {% endfor %}
+    </table>
+    {# supprime toutes les catégories cochées #}
+    <button name="valider" type="submit" class="btn btn-primary mt-4">supprimer la sélection</button>
+  </form>
+{% endblock %}
