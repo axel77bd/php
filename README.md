@@ -1,6 +1,6 @@
 # Blog PHP avec Twig
 
-Petit site de blog réalisé en PHP dans le cadre du cours de PHP (EPSI, 2ᵉ année).
+Petit site de blog réalisé en PHP dans le cadre du cours de PHP (EPSI, 1ére année BTS SIO).
 Il permet de publier des articles, de les commenter, de gérer des catégories et des utilisateurs.
 
 Le HTML est entièrement séparé du PHP grâce au moteur de templates [Twig](https://twig.symfony.com/).
